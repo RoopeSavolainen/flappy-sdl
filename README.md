@@ -1,4 +1,4 @@
-# Flappy Bird clone for Linux - Local LLM vibe coding experiment
+# Flappy Bird clone for Linux - LLM vibe coding experiment
 
 This repo is meant to be a simple Flappy Bird clone targeting Linux + SDL2.
 
