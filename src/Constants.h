@@ -1,10 +1,8 @@
 #pragma once
 
-#include <cstdint>
-
 namespace Constants {
-    constexpr int SCREEN_WIDTH = 288;
-    constexpr int SCREEN_HEIGHT = 512;
+    constexpr int DEFAULT_SCREEN_WIDTH = 288;
+    constexpr int DEFAULT_SCREEN_HEIGHT = 512;
     constexpr int GROUND_HEIGHT = 56;
 
     constexpr int BIRD_WIDTH = 34;

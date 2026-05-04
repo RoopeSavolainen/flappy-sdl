@@ -1,8 +1,8 @@
 #include "Pipe.h"
 #include "Constants.h"
 
-Pipe::Pipe(float x, int gapCenterY)
-    : m_x(x), m_gapCenterY(gapCenterY) {}
+Pipe::Pipe(float x, int gapCenterY, int screenH)
+    : m_x(x), m_gapCenterY(gapCenterY), m_screenH(screenH) {}
 
 void Pipe::update(float dt) {
     m_x -= Constants::PIPE_SPEED * dt;
@@ -28,7 +28,7 @@ SDL_Rect Pipe::getBottomRect() const {
         static_cast<int>(m_x),
         topOfBottom + Constants::PIPE_CAP_HEIGHT,
         Constants::PIPE_WIDTH,
-        Constants::SCREEN_HEIGHT - Constants::GROUND_HEIGHT - topOfBottom - Constants::PIPE_CAP_HEIGHT
+        m_screenH - Constants::GROUND_HEIGHT - topOfBottom - Constants::PIPE_CAP_HEIGHT
     };
 }
 

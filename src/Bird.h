@@ -4,7 +4,7 @@
 
 class Bird {
 public:
-    Bird();
+    Bird(int screenH);
 
     void reset();
     void flap();
@@ -18,6 +18,7 @@ public:
     float getY() const { return m_y; }
 
 private:
+    int m_screenH;
     float m_y;
     float m_velocity;
     int m_frame;

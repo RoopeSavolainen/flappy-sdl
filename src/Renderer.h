@@ -15,7 +15,7 @@ public:
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
 
-    bool init(const std::string& assetDir);
+    bool init(int screenW, int screenH, const std::string& assetDir);
     void clear();
     void present();
 
@@ -33,6 +33,8 @@ public:
 private:
     SDL_Texture* loadTexture(const std::string& path, bool colorKey = false);
 
+    int m_screenW = 0;
+    int m_screenH = 0;
     SDL_Window* m_window = nullptr;
     SDL_Renderer* m_renderer = nullptr;
 

@@ -23,10 +23,13 @@ Renderer::~Renderer() {
     if (m_window) SDL_DestroyWindow(m_window);
 }
 
-bool Renderer::init(const std::string& assetDir) {
+bool Renderer::init(int screenW, int screenH, const std::string& assetDir) {
+    m_screenW = screenW;
+    m_screenH = screenH;
+
     m_window = SDL_CreateWindow("Flappy Bird",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT,
+        m_screenW, m_screenH,
         SDL_WINDOW_SHOWN);
     if (!m_window) {
         std::fprintf(stderr, "SDL_CreateWindow failed: %s\n", SDL_GetError());
@@ -98,10 +101,10 @@ void Renderer::drawGround(float offset) {
     if (!m_ground) return;
 
     int iOffset = static_cast<int>(offset) % Constants::GROUND_TILE_WIDTH;
-    int y = Constants::SCREEN_HEIGHT - Constants::GROUND_HEIGHT;
+    int y = m_screenH - Constants::GROUND_HEIGHT;
 
     // Draw enough tiles to cover the screen
-    for (int x = -iOffset; x < Constants::SCREEN_WIDTH; x += Constants::GROUND_TILE_WIDTH) {
+    for (int x = -iOffset; x < m_screenW; x += Constants::GROUND_TILE_WIDTH) {
         SDL_Rect dst{x, y, Constants::GROUND_TILE_WIDTH, Constants::GROUND_HEIGHT};
         SDL_RenderCopy(m_renderer, m_ground, nullptr, &dst);
     }
@@ -149,7 +152,7 @@ void Renderer::drawPipe(const Pipe& pipe) {
 void Renderer::drawScore(int score) {
     std::string digits = std::to_string(score);
     int totalW = static_cast<int>(digits.size()) * (Constants::DIGIT_WIDTH + 2);
-    int startX = (Constants::SCREEN_WIDTH - totalW) / 2;
+    int startX = (m_screenW - totalW) / 2;
     int y = 40;
 
     for (size_t i = 0; i < digits.size(); i++) {
@@ -169,8 +172,8 @@ void Renderer::drawScore(int score) {
 void Renderer::drawMessage() {
     if (!m_message) return;
     SDL_Rect dst{
-        (Constants::SCREEN_WIDTH - m_messageW) / 2,
-        Constants::SCREEN_HEIGHT / 3 - m_messageH / 2,
+        (m_screenW - m_messageW) / 2,
+        m_screenH / 3 - m_messageH / 2,
         m_messageW,
         m_messageH
     };
@@ -180,8 +183,8 @@ void Renderer::drawMessage() {
 void Renderer::drawGameOver() {
     if (!m_gameover) return;
     SDL_Rect dst{
-        (Constants::SCREEN_WIDTH - m_gameoverW) / 2,
-        Constants::SCREEN_HEIGHT / 3 - m_gameoverH / 2,
+        (m_screenW - m_gameoverW) / 2,
+        m_screenH / 3 - m_gameoverH / 2,
         m_gameoverW,
         m_gameoverH
     };
@@ -192,7 +195,7 @@ void Renderer::drawFlash(float alpha) {
     if (alpha <= 0.0f) return;
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, static_cast<Uint8>(alpha * 255));
-    SDL_Rect full{0, 0, Constants::SCREEN_WIDTH, Constants::SCREEN_HEIGHT};
+    SDL_Rect full{0, 0, m_screenW, m_screenH};
     SDL_RenderFillRect(m_renderer, &full);
     SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_NONE);
 }

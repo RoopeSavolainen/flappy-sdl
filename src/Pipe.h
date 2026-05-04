@@ -4,7 +4,7 @@
 
 class Pipe {
 public:
-    Pipe(float x, int gapCenterY);
+    Pipe(float x, int gapCenterY, int screenH);
 
     void update(float dt);
     bool isOffScreen() const;
@@ -20,4 +20,5 @@ public:
 private:
     float m_x;
     int m_gapCenterY;
+    int m_screenH;
 };

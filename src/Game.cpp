@@ -3,8 +3,9 @@
 #include <algorithm>
 #include <cstdio>
 
-Game::Game()
-    : m_rng(std::random_device{}()) {}
+Game::Game(int screenW, int screenH)
+    : m_screenW(screenW), m_screenH(screenH),
+      m_bird(screenH), m_rng(std::random_device{}()) {}
 
 bool Game::init() {
     char* basePath = SDL_GetBasePath();
@@ -15,7 +16,7 @@ bool Game::init() {
         m_assetDir = "assets/images/";
     }
 
-    if (!m_renderer.init(m_assetDir)) {
+    if (!m_renderer.init(m_screenW, m_screenH, m_assetDir)) {
         return false;
     }
 
@@ -74,8 +75,8 @@ void Game::update(float dt) {
             m_stateTime = 0.0f;
             m_bird.reset();
             m_bird.flap();
-            // Spawn initial pipes
-            for (int i = 0; i < 3; i++) {
+            // Spawn pipes to fill the screen
+            while (needsMorePipes()) {
                 spawnPipe();
             }
         }
@@ -99,9 +100,13 @@ void Game::update(float dt) {
             }
         }
 
-        // Remove off-screen pipes and spawn new ones
+        // Remove off-screen pipes
         while (!m_pipes.empty() && m_pipes.front().isOffScreen()) {
             m_pipes.erase(m_pipes.begin());
+        }
+
+        // Spawn new pipes as needed
+        while (needsMorePipes()) {
             spawnPipe();
         }
 
@@ -121,7 +126,7 @@ void Game::update(float dt) {
 
         // Bird falls to ground
         {
-            float groundY = static_cast<float>(Constants::SCREEN_HEIGHT - Constants::GROUND_HEIGHT - Constants::BIRD_HEIGHT);
+            float groundY = static_cast<float>(m_screenH - Constants::GROUND_HEIGHT - Constants::BIRD_HEIGHT);
             if (m_bird.getY() < groundY) {
                 m_bird.update(dt);
             }
@@ -165,27 +170,32 @@ void Game::render() {
     m_renderer.present();
 }
 
+bool Game::needsMorePipes() const {
+    if (m_pipes.empty()) return true;
+    return m_pipes.back().getX() < m_screenW + Constants::PIPE_SPACING;
+}
+
 void Game::spawnPipe() {
-    float lastX = Constants::SCREEN_WIDTH;
+    float lastX = static_cast<float>(m_screenW);
     if (!m_pipes.empty()) {
         lastX = m_pipes.back().getX() + Constants::PIPE_SPACING;
     }
 
     // Random gap center between reasonable bounds
     int minY = Constants::PIPE_GAP / 2 + Constants::PIPE_CAP_HEIGHT + 20;
-    int maxY = Constants::SCREEN_HEIGHT - Constants::GROUND_HEIGHT - Constants::PIPE_GAP / 2 - Constants::PIPE_CAP_HEIGHT - 20;
+    int maxY = m_screenH - Constants::GROUND_HEIGHT - Constants::PIPE_GAP / 2 - Constants::PIPE_CAP_HEIGHT - 20;
 
     std::uniform_int_distribution<int> dist(minY, maxY);
     int gapCenter = dist(m_rng);
 
-    m_pipes.emplace_back(lastX, gapCenter);
+    m_pipes.emplace_back(lastX, gapCenter, m_screenH);
 }
 
 bool Game::checkCollision() {
     SDL_Rect birdHitbox = m_bird.getHitbox();
 
     // Ground collision
-    int groundY = Constants::SCREEN_HEIGHT - Constants::GROUND_HEIGHT;
+    int groundY = m_screenH - Constants::GROUND_HEIGHT;
     if (birdHitbox.y + birdHitbox.h >= groundY) {
         return true;
     }

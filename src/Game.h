@@ -11,7 +11,7 @@ enum class GameState { Start, Playing, GameOver };
 
 class Game {
 public:
-    Game();
+    Game(int screenW, int screenH);
     ~Game() = default;
 
     bool init();
@@ -24,8 +24,11 @@ private:
 
     void resetGame();
     void spawnPipe();
+    bool needsMorePipes() const;
     bool checkCollision();
 
+    int m_screenW;
+    int m_screenH;
     std::string m_assetDir;
     Renderer m_renderer;
     Bird m_bird;

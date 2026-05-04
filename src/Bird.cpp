@@ -3,12 +3,12 @@
 #include <algorithm>
 #include <cmath>
 
-Bird::Bird() {
+Bird::Bird(int screenH) : m_screenH(screenH) {
     reset();
 }
 
 void Bird::reset() {
-    m_y = Constants::SCREEN_HEIGHT / 2.0f - Constants::BIRD_HEIGHT / 2.0f;
+    m_y = m_screenH / 2.0f - Constants::BIRD_HEIGHT / 2.0f;
     m_velocity = 0.0f;
     m_frame = 0;
     m_frameTimer = 0.0f;
@@ -31,7 +31,7 @@ void Bird::update(float dt) {
 }
 
 void Bird::updateBob(float time) {
-    float baseY = Constants::SCREEN_HEIGHT / 2.0f - Constants::BIRD_HEIGHT / 2.0f;
+    float baseY = m_screenH / 2.0f - Constants::BIRD_HEIGHT / 2.0f;
     m_y = baseY + std::sin(time * 3.0f) * 10.0f;
 
     m_frameTimer += 0.016f;
