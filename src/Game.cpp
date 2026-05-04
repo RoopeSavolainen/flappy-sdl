@@ -175,20 +175,32 @@ bool Game::needsMorePipes() const {
     return m_pipes.back().getX() < m_screenW + Constants::PIPE_SPACING;
 }
 
+int Game::computeGap() {
+    // Lerp from start gap to min gap over PIPE_GAP_RAMP_SCORE points
+    float t = std::min(static_cast<float>(m_score) / Constants::PIPE_GAP_RAMP_SCORE, 1.0f);
+    int baseGap = Constants::PIPE_GAP_START + static_cast<int>(t * (Constants::PIPE_GAP_MIN - Constants::PIPE_GAP_START));
+
+    std::uniform_int_distribution<int> variance(-Constants::PIPE_GAP_VARIANCE, Constants::PIPE_GAP_VARIANCE);
+    return std::clamp(baseGap + variance(m_rng), Constants::PIPE_GAP_MIN, Constants::PIPE_GAP_START);
+}
+
 void Game::spawnPipe() {
     float lastX = static_cast<float>(m_screenW);
     if (!m_pipes.empty()) {
-        lastX = m_pipes.back().getX() + Constants::PIPE_SPACING;
+        std::uniform_int_distribution<int> spacingVar(-Constants::PIPE_SPACING_VARIANCE, Constants::PIPE_SPACING_VARIANCE);
+        lastX = m_pipes.back().getX() + Constants::PIPE_SPACING + spacingVar(m_rng);
     }
 
+    int gap = computeGap();
+
     // Random gap center between reasonable bounds
-    int minY = Constants::PIPE_GAP / 2 + Constants::PIPE_CAP_HEIGHT + 20;
-    int maxY = m_screenH - Constants::GROUND_HEIGHT - Constants::PIPE_GAP / 2 - Constants::PIPE_CAP_HEIGHT - 20;
+    int minY = gap / 2 + Constants::PIPE_CAP_HEIGHT + 20;
+    int maxY = m_screenH - Constants::GROUND_HEIGHT - gap / 2 - Constants::PIPE_CAP_HEIGHT - 20;
 
     std::uniform_int_distribution<int> dist(minY, maxY);
     int gapCenter = dist(m_rng);
 
-    m_pipes.emplace_back(lastX, gapCenter, m_screenH);
+    m_pipes.emplace_back(lastX, gapCenter, gap, m_screenH);
 }
 
 bool Game::checkCollision() {

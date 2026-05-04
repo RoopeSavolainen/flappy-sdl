@@ -24,6 +24,7 @@ private:
 
     void resetGame();
     void spawnPipe();
+    int computeGap();
     bool needsMorePipes() const;
     bool checkCollision();
 

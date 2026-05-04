@@ -16,8 +16,12 @@ namespace Constants {
 
     constexpr int PIPE_WIDTH = 52;
     constexpr int PIPE_CAP_HEIGHT = 26;
-    constexpr int PIPE_GAP = 100;
+    constexpr int PIPE_GAP_START = 130;    // easy opening at score 0
+    constexpr int PIPE_GAP_MIN = 80;       // hardest opening
+    constexpr int PIPE_GAP_VARIANCE = 15;  // +/- random per pipe
+    constexpr int PIPE_GAP_RAMP_SCORE = 30; // score at which gap reaches minimum
     constexpr int PIPE_SPACING = 180;
+    constexpr int PIPE_SPACING_VARIANCE = 30; // +/- random per pipe
     constexpr float PIPE_SPEED = 120.0f;
 
     constexpr int HITBOX_SHRINK = 3;

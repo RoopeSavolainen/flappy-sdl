@@ -1,8 +1,8 @@
 #include "Pipe.h"
 #include "Constants.h"
 
-Pipe::Pipe(float x, int gapCenterY, int screenH)
-    : m_x(x), m_gapCenterY(gapCenterY), m_screenH(screenH) {}
+Pipe::Pipe(float x, int gapCenterY, int gapSize, int screenH)
+    : m_x(x), m_gapCenterY(gapCenterY), m_gapSize(gapSize), m_screenH(screenH) {}
 
 void Pipe::update(float dt) {
     m_x -= Constants::PIPE_SPEED * dt;
@@ -13,7 +13,7 @@ bool Pipe::isOffScreen() const {
 }
 
 SDL_Rect Pipe::getTopRect() const {
-    int bottomOfTop = m_gapCenterY - Constants::PIPE_GAP / 2;
+    int bottomOfTop = m_gapCenterY - m_gapSize / 2;
     return {
         static_cast<int>(m_x),
         0,
@@ -23,7 +23,7 @@ SDL_Rect Pipe::getTopRect() const {
 }
 
 SDL_Rect Pipe::getBottomRect() const {
-    int topOfBottom = m_gapCenterY + Constants::PIPE_GAP / 2;
+    int topOfBottom = m_gapCenterY + m_gapSize / 2;
     return {
         static_cast<int>(m_x),
         topOfBottom + Constants::PIPE_CAP_HEIGHT,
@@ -33,7 +33,7 @@ SDL_Rect Pipe::getBottomRect() const {
 }
 
 SDL_Rect Pipe::getTopCapRect() const {
-    int bottomOfTop = m_gapCenterY - Constants::PIPE_GAP / 2;
+    int bottomOfTop = m_gapCenterY - m_gapSize / 2;
     return {
         static_cast<int>(m_x) - 2,
         bottomOfTop - Constants::PIPE_CAP_HEIGHT,
@@ -43,7 +43,7 @@ SDL_Rect Pipe::getTopCapRect() const {
 }
 
 SDL_Rect Pipe::getBottomCapRect() const {
-    int topOfBottom = m_gapCenterY + Constants::PIPE_GAP / 2;
+    int topOfBottom = m_gapCenterY + m_gapSize / 2;
     return {
         static_cast<int>(m_x) - 2,
         topOfBottom,
